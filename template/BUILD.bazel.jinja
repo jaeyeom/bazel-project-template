@@ -1,0 +1,37 @@
+{% if 'go' in languages -%}
+load("@gazelle//:def.bzl", "gazelle")
+
+# Gazelle configuration
+gazelle(
+    name = "gazelle",
+    command = "fix",
+    extra_args = [
+        "-build_file_name=BUILD.bazel",
+        "-repo_root=.",
+        "-go_naming_convention=go_default_library",
+        "-go_prefix={{ go_module_path }}",
+    ],
+    prefix = "{{ go_module_path }}",
+)
+
+gazelle(
+    name = "gazelle-update-repos",
+    args = [
+        "-from_file=go.mod",
+        "-to_macro=deps.bzl%go_dependencies",
+        "-prune",
+    ],
+    command = "update-repos",
+)
+{% endif %}
+
+exports_files([
+    "MODULE.bazel",
+{% if 'go' in languages %}
+    "go.mod",
+    "go.sum",
+{% endif %}
+{% if 'python' in languages %}
+    "requirements.txt",
+{% endif %}
+])

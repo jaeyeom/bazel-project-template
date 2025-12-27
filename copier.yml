@@ -1,0 +1,77 @@
+# Copier configuration for Bazel-based mono repo template
+_min_copier_version: "9.0.0"
+_subdirectory: template
+
+# Project metadata
+repo_name:
+  type: str
+  help: "Repository name (used for module naming, e.g., github.com/owner/repo_name)"
+  validator: "{% if not repo_name %}Repository name is required{% endif %}"
+
+project_description:
+  type: str
+  help: "Short description of the project"
+  default: "A Bazel-based mono repo project"
+
+# GitHub/Module settings
+github_owner:
+  type: str
+  help: "GitHub owner/organization (e.g., 'myorg' for github.com/myorg/project)"
+  default: ""
+
+# Language selection (multi-choice)
+languages:
+  type: str
+  help: "Languages to include"
+  choices:
+    - go
+    - python
+    - typescript
+    - proto
+  multiselect: true
+  default:
+    - go
+
+# Go-specific settings (conditional)
+go_version:
+  type: str
+  help: "Go version to use"
+  default: "1.24.2"
+  when: "{{ 'go' in languages }}"
+
+go_module_path:
+  type: str
+  help: "Go module path (e.g., github.com/owner/repo)"
+  default: "github.com/{{ github_owner }}/{{ repo_name }}"
+  when: "{{ 'go' in languages }}"
+
+# Python-specific settings (conditional)
+python_version:
+  type: str
+  help: "Python version to use"
+  default: "3.12"
+  when: "{{ 'python' in languages }}"
+
+# Bazel settings
+bazel_version:
+  type: str
+  help: "Bazel version (via Bazelisk)"
+  default: "7.4.1"
+
+# Author information
+author_name:
+  type: str
+  help: "Author name for project metadata"
+  default: ""
+
+author_email:
+  type: str
+  help: "Author email for project metadata"
+  default: ""
+
+# Exclude files based on language selection
+_exclude:
+  - "{% if 'go' not in languages %}go.mod{% endif %}"
+  - "{% if 'go' not in languages %}.golangci.yml{% endif %}"
+  - "{% if 'python' not in languages %}pyproject.toml{% endif %}"
+  - "{% if 'python' not in languages %}requirements.in{% endif %}"

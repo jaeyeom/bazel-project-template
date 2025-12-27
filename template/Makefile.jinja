@@ -1,0 +1,43 @@
+.PHONY: all format test lint fix clean test-bazel
+
+all: format test lint
+
+format:
+	bazel run //tools/format
+
+test: test-bazel
+
+lint:{% if 'go' in languages %} lint-go{% endif %}{% if 'python' in languages %} lint-python{% endif %}
+
+fix:{% if 'go' in languages %} fix-go{% endif %}{% if 'python' in languages %} fix-python{% endif %}
+
+test-bazel:
+	bazel test //...
+{% if 'go' in languages %}
+# Go lint and fix isn't integrated with bazel yet. Nogo is a good option.
+.PHONY: lint-go fix-go
+
+lint-go: go.sum
+	golangci-lint run ./...
+
+fix-go: go.sum
+	golangci-lint run --fix ./...
+
+go.sum: go.mod
+	go mod tidy
+{% endif %}
+{% if 'python' in languages %}
+.PHONY: lint-python fix-python
+
+lint-python:
+	ruff check
+
+fix-python:
+	ruff check --fix
+
+requirements.txt: requirements.in
+	pip-compile --upgrade --output-file=requirements.txt requirements.in
+{% endif %}
+
+clean:
+	bazel clean

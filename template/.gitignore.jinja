@@ -1,0 +1,46 @@
+# Bazel
+bazel-bin
+bazel-out
+bazel-testlogs
+bazel-{{ repo_name }}*
+.bazel_output
+
+# Logs
+*.log
+
+# Environment
+.env
+.envrc
+{% if 'go' in languages %}
+
+# Go
+*.exe
+*.test
+{% endif %}
+{% if 'python' in languages %}
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+{% endif %}
+{% if 'typescript' in languages %}
+
+# Node
+node_modules/
+dist/
+{% endif %}
+
+# Editor
+.idea/
+.vscode/
+*.sw?
+
+# OS
+.DS_Store
+
+# Coverage
+lcov.info
+coverage/

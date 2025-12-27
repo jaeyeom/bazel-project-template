@@ -1,0 +1,32 @@
+[project]
+name = "{{ repo_name }}"
+version = "0.1.0"
+description = "{{ project_description }}"
+{% if author_name %}
+authors = [
+    { name = "{{ author_name }}"{% if author_email %}, email = "{{ author_email }}"{% endif %} }
+]
+{% endif %}
+requires-python = ">={{ python_version }}"
+
+[tool.ruff]
+extend-exclude = [
+    "*_pb2.py",
+    "*_pb2_grpc.py",
+    "bazel-*",
+]
+line-length = 79
+indent-width = 4
+fix = true
+
+[tool.ruff.lint]
+extend-select = ["UP", "D"]
+fixable = ["ALL"]
+
+[tool.ruff.format]
+quote-style = "preserve"
+indent-style = "space"
+docstring-code-format = true
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(bazel build:*)",
+      "Bash(bazel cquery:*)",
+      "Bash(bazel query:*)",
+      "Bash(bazel test:*)",
+      "Bash(bazel run:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(make:*)"{% if 'go' in languages %},
+      "Bash(go test:*)",
+      "Bash(golangci-lint run:*)"{% endif %}{% if 'python' in languages %},
+      "Bash(ruff:*)",
+      "Bash(pip-compile:*)"{% endif %}
+    ],
+    "deny": [],
+    "defaultMode": "acceptEdits"
+  }
+}

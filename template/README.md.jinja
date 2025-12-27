@@ -1,0 +1,60 @@
+# {{ repo_name }}
+
+{{ project_description }}
+
+## Prerequisites
+
+- [Bazelisk](https://github.com/bazelbuild/bazelisk) (Bazel version manager)
+{% if 'go' in languages -%}
+- Go {{ go_version }}+
+- [golangci-lint](https://golangci-lint.run/)
+{% endif %}
+{% if 'python' in languages -%}
+- Python {{ python_version }}+
+- [ruff](https://docs.astral.sh/ruff/)
+- [pip-tools](https://pip-tools.readthedocs.io/)
+{% endif %}
+
+## Development
+
+```bash
+# Format, test, and lint
+make
+
+# Individual commands
+make format   # Format code
+make test     # Run tests
+make lint     # Run linters
+make fix      # Auto-fix lint issues
+```
+
+## Build System
+
+This project uses Bazel for builds:
+
+```bash
+bazel build //...    # Build all targets
+bazel test //...     # Run all tests
+{% if 'go' in languages -%}
+bazel run //:gazelle # Generate BUILD.bazel files
+{% endif %}
+```
+
+## Project Structure
+
+```
+{{ repo_name }}/
+├── MODULE.bazel     # Bazel dependencies
+├── BUILD.bazel      # Root build file
+├── Makefile         # Development commands
+├── CLAUDE.md        # AI assistant instructions
+{% if 'go' in languages -%}
+├── go.mod           # Go module
+├── .golangci.yml    # Go linting config
+{% endif %}
+{% if 'python' in languages -%}
+├── pyproject.toml   # Python config
+├── requirements.in  # Python dependencies
+{% endif %}
+└── docs/claude/     # Reference for Claude Code
+```

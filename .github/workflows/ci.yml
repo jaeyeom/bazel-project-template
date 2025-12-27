@@ -28,7 +28,7 @@ jobs:
           - name: go-python
             languages: go,python
           - name: all-languages
-            languages: go,python,typescript,proto
+            languages: go,python,proto
     steps:
       - uses: actions/checkout@v4
 

@@ -32,20 +32,6 @@ pip_ext.parse(
 )
 use_repo(pip_ext, "pip_deps")
 {% endif %}
-{% if 'typescript' in languages %}
-
-# TypeScript/JavaScript
-bazel_dep(name = "aspect_rules_js", version = "2.1.2")
-bazel_dep(name = "aspect_rules_ts", version = "3.4.1")
-bazel_dep(name = "rules_nodejs", version = "6.3.2")
-
-npm = use_extension("@aspect_rules_js//npm:extensions.bzl", "npm", dev_dependency = True)
-npm.npm_translate_lock(
-    name = "npm",
-    pnpm_lock = "//:pnpm-lock.yaml",
-)
-use_repo(npm, "npm")
-{% endif %}
 {% if 'proto' in languages %}
 
 # Protocol Buffers

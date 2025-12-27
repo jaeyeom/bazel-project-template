@@ -144,10 +144,10 @@ fi
 
 # Create answers file
 ANSWERS_FILE=$(mktemp --suffix=.yml)
-trap "rm -f $ANSWERS_FILE" EXIT
+trap 'rm -f "$ANSWERS_FILE"' EXIT
 
 # Convert comma-separated languages to YAML list format
-LANGUAGES_YAML=$(echo "$LANGUAGES" | sed 's/,/, /g')
+LANGUAGES_YAML="${LANGUAGES//,/, }"
 
 cat > "$ANSWERS_FILE" << EOF
 repo_name: "${REPO_NAME}"
@@ -175,7 +175,7 @@ else
 
     # Check for editor
     if [[ -n "$EDITOR" ]]; then
-        read -p "Press Enter to continue, 'e' to edit, or Ctrl+C to cancel: " response
+        read -rp "Press Enter to continue, 'e' to edit, or Ctrl+C to cancel: " response
         if [[ "$response" = "e" || "$response" = "E" ]]; then
             $EDITOR "$ANSWERS_FILE"
             echo ""
@@ -183,10 +183,10 @@ else
             echo "----------------------------------------"
             cat "$ANSWERS_FILE"
             echo "----------------------------------------"
-            read -p "Press Enter to continue or Ctrl+C to cancel: "
+            read -rp "Press Enter to continue or Ctrl+C to cancel: "
         fi
     else
-        read -p "Press Enter to continue or Ctrl+C to cancel: "
+        read -rp "Press Enter to continue or Ctrl+C to cancel: "
     fi
 fi
 

@@ -83,4 +83,9 @@ jobs:
       - name: Create then update project
         run: |
           ./create-project.sh -y -n test-project /tmp/test-project
+          cd /tmp/test-project
+          git init
+          git add .
+          git commit -m "Initial commit"
+          cd -
           ./update-project.sh -y /tmp/test-project

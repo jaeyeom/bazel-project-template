@@ -90,7 +90,9 @@ jobs:
         run: |
           ./create-project.sh -y -n test-project /tmp/test-project
           cd /tmp/test-project
-          git init
+          git init -b main
+          git config user.name "CI"
+          git config user.email "ci@example.com"
           git add .
           git commit -m "Initial commit"
           cd -

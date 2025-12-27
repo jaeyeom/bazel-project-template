@@ -64,6 +64,12 @@ jobs:
           disk-cache: ${{ github.workflow }}-${{ matrix.name }}
           repository-cache: true
 
+      - name: Create placeholder Go file for linting
+        if: contains(matrix.languages, 'go')
+        run: |
+          mkdir -p /tmp/test-project/cmd/hello
+          printf 'package main\n\nfunc main() { println("hello") }\n' > /tmp/test-project/cmd/hello/main.go
+
       - name: Build and test generated project
         run: make all
         working-directory: /tmp/test-project

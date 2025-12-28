@@ -194,9 +194,13 @@ fi
 copier copy --data-file "$ANSWERS_FILE" "$SCRIPT_DIR" "$DESTINATION"
 
 # Create .copier-answers.yml (copier doesn't create it when using --data-file)
+TEMPLATE_COMMIT=$(git -C "$SCRIPT_DIR" rev-parse HEAD 2>/dev/null || echo "")
 {
     echo "# Changes here will be overwritten by Copier"
     echo "_src_path: $SCRIPT_DIR"
+    if [[ -n "$TEMPLATE_COMMIT" ]]; then
+        echo "_commit: $TEMPLATE_COMMIT"
+    fi
     cat "$ANSWERS_FILE"
 } > "$DESTINATION/.copier-answers.yml"
 

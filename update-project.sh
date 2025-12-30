@@ -2,6 +2,8 @@
 # Update an existing project from the template
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 usage() {
     cat << EOF
 Usage: $(basename "$0") [OPTIONS] <destination>
@@ -14,6 +16,7 @@ Arguments:
 Options:
   -A, --skip-answered  Skip questions that have already been answered
   -n, --pretend        Show what would be done without making changes
+  --local              Use local template (for testing before pushing)
   -y, --yes            Skip confirmation and use defaults
   -h, --help           Show this help message
 
@@ -21,12 +24,14 @@ Examples:
   $(basename "$0") .                  # Update current directory
   $(basename "$0") ~/projects/my-app  # Update specific project
   $(basename "$0") -A .               # Update, keeping existing answers
+  $(basename "$0") --local .          # Update from local template
 EOF
     exit "${1:-0}"
 }
 
 DESTINATION=""
 COPIER_ARGS=()
+USE_LOCAL=false
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -41,6 +46,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         -y|--yes)
             COPIER_ARGS+=("--defaults")
+            shift
+            ;;
+        --local)
+            USE_LOCAL=true
             shift
             ;;
         -h|--help)
@@ -73,8 +82,22 @@ fi
 echo "Updating project at: $DESTINATION"
 echo ""
 
+ANSWERS_FILE="$DESTINATION/.copier-answers.yml"
+
 # Run copier update
-copier update "${COPIER_ARGS[@]}" "$DESTINATION"
+if [[ "$USE_LOCAL" = true ]]; then
+    # Temporarily update _src_path to local template
+    ORIGINAL_SRC=$(grep '^_src_path:' "$ANSWERS_FILE")
+    sed -i.bak "s|^_src_path:.*|_src_path: $SCRIPT_DIR|" "$ANSWERS_FILE"
+    trap 'sed -i.bak "s|^_src_path:.*|$ORIGINAL_SRC|" "$ANSWERS_FILE"; rm -f "$ANSWERS_FILE.bak"' EXIT
+    copier update "${COPIER_ARGS[@]}" "$DESTINATION"
+    # Restore original _src_path
+    sed -i.bak "s|^_src_path:.*|$ORIGINAL_SRC|" "$ANSWERS_FILE"
+    rm -f "$ANSWERS_FILE.bak"
+    trap - EXIT
+else
+    copier update "${COPIER_ARGS[@]}" "$DESTINATION"
+fi
 
 echo ""
 echo "Project updated successfully!"

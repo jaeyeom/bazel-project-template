@@ -143,7 +143,7 @@ if [[ -z "$GITHUB_OWNER" ]]; then
 fi
 
 # Create answers file
-ANSWERS_FILE=$(mktemp --suffix=.yml)
+ANSWERS_FILE=$(mktemp "${TMPDIR:-/tmp}/answers.XXXXXX.yml")
 trap 'rm -f "$ANSWERS_FILE"' EXIT
 
 # Convert comma-separated languages to YAML list format

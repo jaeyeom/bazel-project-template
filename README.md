@@ -32,17 +32,22 @@ cd bazel-monorepo-template
 ./create-project.sh --help
 ```
 
-### Using copier directly
+### Updating an existing project
+
+When the template is updated, you can pull in changes to your existing project:
 
 ```bash
-# Install copier
-pip install copier
+# Update current directory
+./update-project.sh .
 
-# Generate a new project (interactive prompts)
-copier copy gh:jaeyeom/bazel-monorepo-template my-project
+# Update a specific project
+./update-project.sh ~/projects/my-app
 
-# Or with answers file for non-interactive use
-copier copy --data-file answers.yml --defaults gh:jaeyeom/bazel-monorepo-template my-project
+# Preview changes without applying
+./update-project.sh -n .
+
+# See all options
+./update-project.sh --help
 ```
 
 ## Template Questions
@@ -95,3 +100,13 @@ make format    # Format code
 make test      # Run tests
 make lint      # Run linters
 ```
+
+To generate or update BUILD.bazel files (useful when migrating existing code or
+adding new packages):
+
+```bash
+bazel run //:gazelle
+```
+
+Note: Gazelle works well for standard project layouts but may need manual tweaks
+for large or complex projects.

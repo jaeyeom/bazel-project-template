@@ -110,3 +110,10 @@ bazel run //:gazelle
 
 Note: Gazelle works well for standard project layouts but may need manual tweaks
 for large or complex projects.
+
+To manage dependencies:
+
+```bash
+go mod tidy      # Clean up Go module dependencies
+bazel mod tidy   # Clean up Bazel module dependencies
+```

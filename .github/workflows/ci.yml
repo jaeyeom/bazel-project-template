@@ -74,6 +74,53 @@ jobs:
         run: make all
         working-directory: ${{ runner.temp }}/test-project
 
+  # Test with latest versioned tag to ensure scripts work with released versions
+  test-template-tagged:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: Install copier and tools
+        run: |
+          pip install copier
+          pip install ruff
+
+      - name: Install golangci-lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
+          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+
+      - name: Create project from latest tagged template
+        run: |
+          ./create-project.sh -y \
+            -n test-project \
+            -o testorg \
+            -l go \
+            "$RUNNER_TEMP/test-project"
+
+      - uses: bazel-contrib/setup-bazel@0.14.0
+        with:
+          bazelisk-cache: true
+          disk-cache: ${{ github.workflow }}-tagged
+          repository-cache: true
+
+      - name: Create placeholder Go file for linting
+        run: |
+          mkdir -p "$RUNNER_TEMP/test-project/cmd/hello"
+          printf 'package main\n\nfunc main() { println("hello") }\n' > "$RUNNER_TEMP/test-project/cmd/hello/main.go"
+
+      - name: Build and test generated project
+        run: make all
+        working-directory: ${{ runner.temp }}/test-project
+
   test-update:
     runs-on: ubuntu-latest
     steps:
@@ -97,6 +144,31 @@ jobs:
           git commit -m "Initial commit"
           cd -
           ./update-project.sh -y --local "$RUNNER_TEMP/test-project"
+
+  # Test update script with latest versioned tag
+  test-update-tagged:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install copier
+        run: pip install copier
+
+      - name: Create project from tagged template then update
+        run: |
+          ./create-project.sh -y -n test-project "$RUNNER_TEMP/test-project"
+          cd "$RUNNER_TEMP/test-project"
+          git init -b main
+          git config user.name "CI"
+          git config user.email "ci@example.com"
+          git add .
+          git commit -m "Initial commit"
+          cd -
+          ./update-project.sh -y "$RUNNER_TEMP/test-project"
 
   test-migrate:
     runs-on: ubuntu-latest
@@ -194,6 +266,56 @@ jobs:
 
       - name: Build migrated project
         if: matrix.ignore_all == false
+        run: |
+          cd "$RUNNER_TEMP/existing-project"
+          bazel run //:gazelle 2>/dev/null || true
+          bazel build //... 2>&1 || echo "Build completed (some targets may fail without full setup)"
+
+  # Test migration with latest versioned tag
+  test-migrate-tagged:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: Install copier
+        run: pip install copier
+
+      - name: Create existing Go project
+        run: |
+          mkdir -p "$RUNNER_TEMP/existing-project"
+          cd "$RUNNER_TEMP/existing-project"
+          echo 'module github.com/testowner/existing-project' > go.mod
+          echo 'go 1.22' >> go.mod
+          mkdir -p cmd/hello
+          printf 'package main\n\nfunc main() { println("hello") }\n' > cmd/hello/main.go
+
+      - name: Run migration with tagged template
+        run: |
+          ./create-project.sh --migrate -y "$RUNNER_TEMP/existing-project"
+
+      - name: Verify migration files
+        run: |
+          cd "$RUNNER_TEMP/existing-project"
+          test -f MODULE.bazel || (echo "MODULE.bazel missing" && exit 1)
+          test -f BUILD.bazel || (echo "BUILD.bazel missing" && exit 1)
+          test -f .bazelrc || (echo ".bazelrc missing" && exit 1)
+          echo "All migration files present"
+
+      - uses: bazel-contrib/setup-bazel@0.14.0
+        with:
+          bazelisk-cache: true
+          disk-cache: ${{ github.workflow }}-migrate-tagged
+          repository-cache: true
+
+      - name: Build migrated project
         run: |
           cd "$RUNNER_TEMP/existing-project"
           bazel run //:gazelle 2>/dev/null || true

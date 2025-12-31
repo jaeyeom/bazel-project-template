@@ -209,7 +209,12 @@ COPIER_ARGS=("--data-file" "$ANSWERS_FILE")
 if [[ "$USE_HEAD" = true ]]; then
     COPIER_ARGS+=("--vcs-ref=HEAD")
 fi
-copier copy "${COPIER_ARGS[@]}" "$SCRIPT_DIR" "$DESTINATION"
+if [[ "$USE_LOCAL" = true ]]; then
+    TEMPLATE_SRC="$SCRIPT_DIR"
+else
+    TEMPLATE_SRC="gh:jaeyeom/bazel-project-template"
+fi
+copier copy "${COPIER_ARGS[@]}" "$TEMPLATE_SRC" "$DESTINATION"
 
 echo ""
 echo "Project created at: $DESTINATION"

@@ -23,15 +23,15 @@ gazelle(
     ],
     command = "update-repos",
 )
-{% endif %}
+{%- endif %}
 
 exports_files([
     "MODULE.bazel",
-{% if 'go' in languages %}
+{%- if 'go' in languages %}
     "go.mod",
     "go.sum",
-{% endif %}
-{% if 'python' in languages %}
+{%- endif %}
+{%- if 'python' in languages %}
     "requirements.txt",
-{% endif %}
+{%- endif %}
 ])

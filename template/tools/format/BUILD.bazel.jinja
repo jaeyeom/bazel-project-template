@@ -4,15 +4,15 @@ package(default_visibility = ["//visibility:public"])
 
 format_multirun(
     name = "format",
-{% if 'go' in languages %}
+{%- if 'go' in languages %}
     go = "@aspect_rules_lint//format:gofumpt",
-{% endif %}
-{% if 'proto' in languages %}
+{%- endif %}
+{%- if 'proto' in languages %}
     protocol_buffer = "//tools/lint:buf",
-{% endif %}
-{% if 'python' in languages %}
+{%- endif %}
+{%- if 'python' in languages %}
     python = "@aspect_rules_lint//format:ruff",
-{% endif %}
+{%- endif %}
     starlark = "@buildifier_prebuilt//:buildifier",
 )
 
@@ -20,16 +20,16 @@ format_test(
     name = "format_test",
     size = "small",
     timeout = "short",
-{% if 'go' in languages %}
+{%- if 'go' in languages %}
     go = "@aspect_rules_lint//format:gofumpt",
-{% endif %}
+{%- endif %}
     no_sandbox = True,
-{% if 'proto' in languages %}
+{%- if 'proto' in languages %}
     protocol_buffer = "//tools/lint:buf",
-{% endif %}
-{% if 'python' in languages %}
+{%- endif %}
+{%- if 'python' in languages %}
     python = "@aspect_rules_lint//format:ruff",
-{% endif %}
+{%- endif %}
     starlark = "@buildifier_prebuilt//:buildifier",
     workspace = "//:MODULE.bazel",
 )

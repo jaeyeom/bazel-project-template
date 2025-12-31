@@ -26,11 +26,11 @@ pip_ext = use_extension(
     "pip",
 )
 pip_ext.parse(
-    hub_name = "pip_deps",
+    hub_name = "py_deps",
     python_version = "{{ python_version }}",
     requirements_lock = "//:requirements.txt",
 )
-use_repo(pip_ext, "pip_deps")
+use_repo(pip_ext, "py_deps")
 {% endif %}
 {% if 'proto' in languages %}
 

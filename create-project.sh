@@ -22,8 +22,11 @@ Options:
   --python-version VER Python version (default: auto-detect or 3.12)
   --bazel-version VER  Bazel version (default: 7.4.1)
   --local              Use local template path (for testing before pushing)
+  --head               Use latest commit instead of latest tag (for CI/CD)
   -y, --yes            Skip confirmation and use defaults
   -h, --help           Show this help message
+
+Note: By default, uses the latest tagged version. Use --head for untagged commits.
 
 Examples:
   $(basename "$0") my-project
@@ -73,6 +76,7 @@ BAZEL_VERSION="7.4.1"
 DESTINATION=""
 SKIP_CONFIRM=false
 USE_LOCAL=false
+USE_HEAD=false
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -111,6 +115,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --local)
             USE_LOCAL=true
+            shift
+            ;;
+        --head)
+            USE_HEAD=true
             shift
             ;;
         -h|--help)
@@ -197,7 +205,11 @@ else
 fi
 
 # Run copier (creates .copier-answers.yml via template)
-copier copy --data-file "$ANSWERS_FILE" "$SCRIPT_DIR" "$DESTINATION"
+COPIER_ARGS=("--data-file" "$ANSWERS_FILE")
+if [[ "$USE_HEAD" = true ]]; then
+    COPIER_ARGS+=("--vcs-ref=HEAD")
+fi
+copier copy "${COPIER_ARGS[@]}" "$SCRIPT_DIR" "$DESTINATION"
 
 echo ""
 echo "Project created at: $DESTINATION"

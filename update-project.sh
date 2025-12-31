@@ -16,14 +16,17 @@ Arguments:
 Options:
   -n, --pretend        Show what would be done without making changes
   --local              Use local template (for testing before pushing)
+  --head               Use latest commit instead of latest tag (for CI/CD)
   -y, --yes            Skip confirmation and use defaults
   -h, --help           Show this help message
 
 Note: Previously answered questions are skipped by default (uses .copier-answers.yml).
+      By default, updates to the latest tagged version. Use --head for untagged commits.
 
 Examples:
-  $(basename "$0") .                  # Update current directory
+  $(basename "$0") .                  # Update to latest tagged version
   $(basename "$0") ~/projects/my-app  # Update specific project
+  $(basename "$0") --head .           # Update to latest commit (CI/CD)
   $(basename "$0") --local .          # Update from local template (for testing)
 EOF
     exit "${1:-0}"
@@ -42,6 +45,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         -y|--yes)
             COPIER_ARGS+=("--defaults")
+            shift
+            ;;
+        --head)
+            COPIER_ARGS+=("--vcs-ref=HEAD")
             shift
             ;;
         --local)

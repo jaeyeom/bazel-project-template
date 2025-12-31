@@ -196,24 +196,8 @@ else
     fi
 fi
 
-# Run copier
+# Run copier (creates .copier-answers.yml via template)
 copier copy --data-file "$ANSWERS_FILE" "$SCRIPT_DIR" "$DESTINATION"
-
-# Create .copier-answers.yml (copier doesn't create it when using --data-file)
-TEMPLATE_COMMIT=$(git -C "$SCRIPT_DIR" rev-parse HEAD 2>/dev/null || echo "")
-if [[ "$USE_LOCAL" = true ]]; then
-    TEMPLATE_SRC="$SCRIPT_DIR"
-else
-    TEMPLATE_SRC="gh:jaeyeom/bazel-project-template"
-fi
-{
-    echo "# Changes here will be overwritten by Copier"
-    echo "_src_path: $TEMPLATE_SRC"
-    if [[ -n "$TEMPLATE_COMMIT" ]]; then
-        echo "_commit: $TEMPLATE_COMMIT"
-    fi
-    cat "$ANSWERS_FILE"
-} > "$DESTINATION/.copier-answers.yml"
 
 echo ""
 echo "Project created at: $DESTINATION"

@@ -1,6 +1,11 @@
-.PHONY: all format test lint fix clean test-bazel
+.PHONY: all check check-format format test lint fix clean test-bazel
 
-all: format test lint
+all: format test fix
+
+check: check-format test lint
+
+check-format:
+	bazel test //tools/format/...:all
 
 format:
 	bazel run //tools/format

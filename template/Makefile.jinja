@@ -1,6 +1,11 @@
-.PHONY: all check check-format format test lint fix clean test-bazel
+.PHONY: all check check-format format test lint fix clean test-bazel tidy
 
-all: format test fix
+all: tidy format test fix
+
+tidy: MODULE.bazel.lock{% if 'go' in languages %} go.sum{% endif %}
+
+MODULE.bazel.lock: MODULE.bazel{% if 'go' in languages %} go.sum{% endif %}
+	bazel mod tidy
 
 check: check-format test lint
 
@@ -29,7 +34,7 @@ fix-go: go.sum
 	golangci-lint run --fix ./...
 
 go.sum: go.mod
-	go mod tidy
+	bazel run @rules_go//go -- mod tidy
 {% endif %}
 {% if 'python' in languages %}
 .PHONY: lint-python fix-python

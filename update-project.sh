@@ -123,3 +123,20 @@ fi
 
 echo ""
 echo "Project updated successfully!"
+echo ""
+
+# Run tidy commands if relevant files exist
+cd "$DESTINATION"
+
+if [[ -f "MODULE.bazel" ]]; then
+    if [[ -f "go.mod" ]]; then
+        echo "Running go mod tidy (via Bazel)..."
+        bazel run @rules_go//go -- mod tidy || echo "Warning: go mod tidy failed (you may need to run it manually)"
+    fi
+
+    echo "Running bazel mod tidy..."
+    bazel mod tidy || echo "Warning: bazel mod tidy failed (you may need to run it manually)"
+fi
+
+echo ""
+echo "Done!"

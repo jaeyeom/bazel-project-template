@@ -1,0 +1,38 @@
+# Bazel ignore file
+# Directories listed here are excluded from Bazel's package discovery
+
+{% if ignore_all -%}
+# =============================================================================
+# GRADUAL MIGRATION MODE
+# =============================================================================
+# This file was generated with --ignore-all for gradual migration.
+# All existing directories are listed below.
+#
+# Migration workflow:
+# 1. Start with everything ignored (current state)
+# 2. Pick a foundational package (one with no internal dependencies)
+# 3. Remove it from this file
+# 4. Run: bazel run //:gazelle
+# 5. Fix any build issues
+# 6. Verify: bazel build //<package>/...
+# 7. Repeat with packages that depend on already-migrated packages
+#
+# See MIGRATION.md for detailed guidance.
+# =============================================================================
+
+# TODO: Remove directories from this list as you migrate them to Bazel
+# Start with foundational packages (those that don't import other internal code)
+
+# Example directories to migrate (customize for your project):
+# cmd/
+# internal/
+# pkg/
+# src/
+# lib/
+# api/
+
+{% endif -%}
+# Common directories to always ignore
+vendor/
+node_modules/
+.git/

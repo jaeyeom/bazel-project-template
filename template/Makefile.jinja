@@ -2,9 +2,9 @@
 
 all: tidy format test fix
 
-tidy: MODULE.bazel.lock{% if 'go' in languages %} go.sum{% endif %}
+tidy: MODULE.bazel.lock{% if 'go' in languages %} go.sum{% endif %}{% if 'python' in languages %} requirements.txt{% endif %}
 
-MODULE.bazel.lock: MODULE.bazel{% if 'go' in languages %} go.sum{% endif %}
+MODULE.bazel.lock: MODULE.bazel{% if 'go' in languages %} go.sum{% endif %}{% if 'python' in languages %} requirements.txt{% endif %}
 	bazel mod tidy
 
 check: check-format test lint
@@ -48,6 +48,5 @@ fix-python:
 requirements.txt: requirements.in
 	pip-compile --upgrade --output-file=requirements.txt requirements.in
 {% endif %}
-
 clean:
 	bazel clean --async

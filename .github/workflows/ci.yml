@@ -44,6 +44,7 @@ jobs:
         run: |
           pip install copier
           pip install ruff
+          pip install pip-tools
 
       - name: Install golangci-lint
         run: |
@@ -92,6 +93,7 @@ jobs:
         run: |
           pip install copier
           pip install ruff
+          pip install pip-tools
 
       - name: Install golangci-lint
         run: |

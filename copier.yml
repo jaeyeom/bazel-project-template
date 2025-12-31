@@ -55,7 +55,7 @@ python_version:
 bazel_version:
   type: str
   help: "Bazel version (via Bazelisk)"
-  default: "7.4.1"
+  default: "8.5.0"
 
 # Author information
 author_name:

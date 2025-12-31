@@ -20,7 +20,7 @@ Options:
   -d, --description D  Project description
   --go-version VER     Go version (default: auto-detect or 1.24.2)
   --python-version VER Python version (default: auto-detect or 3.12)
-  --bazel-version VER  Bazel version (default: 7.4.1)
+  --bazel-version VER  Bazel version (default: 8.5.0)
   --local              Use local template path (for testing before pushing)
   --head               Use latest commit instead of latest tag (for CI/CD)
   --migrate            Migrate existing project to Bazel (auto-detects settings)
@@ -123,7 +123,7 @@ REPO_NAME=""
 GITHUB_OWNER="$GITHUB_USER"
 LANGUAGES="go"
 DESCRIPTION="A Bazel-based mono repo project"
-BAZEL_VERSION="7.4.1"
+BAZEL_VERSION="8.5.0"
 DESTINATION=""
 SKIP_CONFIRM=false
 USE_LOCAL=false

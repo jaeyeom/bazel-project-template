@@ -61,7 +61,7 @@ When the template is updated, you can pull in changes to your existing project:
 | `go_version`          | Go version (if Go selected)                 | "1.24.2"                          |
 | `go_module_path`      | Go module path (if Go selected)             | "github.com/{owner}/{repo_name}"  |
 | `python_version`      | Python version (if Python selected)         | "3.12"                            |
-| `bazel_version`       | Bazel version                               | "7.4.1"                           |
+| `bazel_version`       | Bazel version                               | "8.5.0"                           |
 | `author_name`         | Author name                                 | ""                                |
 | `author_email`        | Author email                                | ""                                |
 

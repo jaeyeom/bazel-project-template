@@ -19,8 +19,8 @@ The helper script auto-detects author info from git config and uses sensible def
 
 ```bash
 # Clone the template
-git clone https://github.com/jaeyeom/bazel-monorepo-template.git
-cd bazel-monorepo-template
+git clone https://github.com/jaeyeom/bazel-project-template.git
+cd bazel-project-template
 
 # Create a new project
 ./create-project.sh ~/projects/my-project

@@ -204,7 +204,7 @@ TEMPLATE_COMMIT=$(git -C "$SCRIPT_DIR" rev-parse HEAD 2>/dev/null || echo "")
 if [[ "$USE_LOCAL" = true ]]; then
     TEMPLATE_SRC="$SCRIPT_DIR"
 else
-    TEMPLATE_SRC="gh:jaeyeom/bazel-monorepo-template"
+    TEMPLATE_SRC="gh:jaeyeom/bazel-project-template"
 fi
 {
     echo "# Changes here will be overwritten by Copier"

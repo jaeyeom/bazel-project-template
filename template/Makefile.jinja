@@ -19,6 +19,8 @@ test: test-bazel
 
 lint:{% if 'go' in languages %} lint-go{% endif %}{% if 'python' in languages %} lint-python{% endif %}
 
+# Target fix is best-effort autofix for lint issues. If autofix is not
+# available, it still runs lint checks.
 fix:{% if 'go' in languages %} fix-go{% endif %}{% if 'python' in languages %} fix-python{% endif %}
 
 test-bazel:

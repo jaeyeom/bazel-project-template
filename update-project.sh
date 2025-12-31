@@ -86,17 +86,32 @@ ANSWERS_FILE="$DESTINATION/.copier-answers.yml"
 
 # Run copier update
 if [[ "$USE_LOCAL" = true ]]; then
-    # Temporarily update _src_path to local template
+    # For local mode, we need to temporarily commit the _src_path change
+    # because copier refuses to update dirty repositories
     ORIGINAL_SRC=$(grep '^_src_path:' "$ANSWERS_FILE")
     sed -i.bak "s|^_src_path:.*|_src_path: $SCRIPT_DIR|" "$ANSWERS_FILE"
-    trap 'sed -i.bak "s|^_src_path:.*|$ORIGINAL_SRC|" "$ANSWERS_FILE"; rm -f "$ANSWERS_FILE.bak"' EXIT
-    copier update "${COPIER_ARGS[@]}" "$DESTINATION"
-    # Restore original _src_path
-    sed -i.bak "s|^_src_path:.*|$ORIGINAL_SRC|" "$ANSWERS_FILE"
     rm -f "$ANSWERS_FILE.bak"
-    trap - EXIT
+
+    # Commit the temporary change (will be amended/reverted after copier runs)
+    ORIGINAL_DIR="$(pwd)"
+    cd "$DESTINATION"
+    git add .copier-answers.yml
+    git commit -m "chore: temporarily use local template source for update"
+    cd "$ORIGINAL_DIR"
+
+    # Set up cleanup trap to restore original _src_path in the final commit
+    cleanup() {
+        sed -i.bak "s|^_src_path:.*|$ORIGINAL_SRC|" "$ANSWERS_FILE"
+        rm -f "$ANSWERS_FILE.bak"
+    }
+    trap cleanup EXIT
+
+    COPIER_RUNNING=1 copier update "${COPIER_ARGS[@]}" "$DESTINATION"
+
+    # Copier will have created a new commit; the cleanup trap will restore _src_path
+    # The user should amend/squash commits as needed
 else
-    copier update "${COPIER_ARGS[@]}" "$DESTINATION"
+    COPIER_RUNNING=1 copier update "${COPIER_ARGS[@]}" "$DESTINATION"
 fi
 
 echo ""

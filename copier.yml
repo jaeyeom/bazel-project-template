@@ -5,7 +5,7 @@ _subdirectory: template
 # Project metadata
 repo_name:
   type: str
-  help: "Repository name (used for module naming, e.g., github.com/owner/repo_name)"
+  help: "Repository name (e.g., my-project, used for Bazel module and package naming)"
   validator: "{% if not repo_name %}Repository name is required{% endif %}"
 
 project_description:

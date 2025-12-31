@@ -14,32 +14,28 @@ Arguments:
   destination          Project directory to update (required)
 
 Options:
-  -A, --skip-answered  Skip questions that have already been answered
   -n, --pretend        Show what would be done without making changes
   --local              Use local template (for testing before pushing)
   -y, --yes            Skip confirmation and use defaults
   -h, --help           Show this help message
 
+Note: Previously answered questions are skipped by default (uses .copier-answers.yml).
+
 Examples:
   $(basename "$0") .                  # Update current directory
   $(basename "$0") ~/projects/my-app  # Update specific project
-  $(basename "$0") -A .               # Update, keeping existing answers
-  $(basename "$0") --local .          # Update from local template
+  $(basename "$0") --local .          # Update from local template (for testing)
 EOF
     exit "${1:-0}"
 }
 
 DESTINATION=""
-COPIER_ARGS=()
+COPIER_ARGS=("--skip-answered")  # Always skip questions that have answers in .copier-answers.yml
 USE_LOCAL=false
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
-        -A|--skip-answered)
-            COPIER_ARGS+=("--skip-answered")
-            shift
-            ;;
         -n|--pretend)
             COPIER_ARGS+=("--pretend")
             shift
@@ -99,7 +95,7 @@ if [[ "$USE_LOCAL" = true ]]; then
     git commit -m "chore: temporarily use local template source for update"
     cd "$ORIGINAL_DIR"
 
-    # Set up cleanup trap to restore original _src_path in the final commit
+    # Set up cleanup trap to restore original _src_path (always runs)
     cleanup() {
         sed -i.bak "s|^_src_path:.*|$ORIGINAL_SRC|" "$ANSWERS_FILE"
         rm -f "$ANSWERS_FILE.bak"
@@ -108,8 +104,10 @@ if [[ "$USE_LOCAL" = true ]]; then
 
     COPIER_RUNNING=1 copier update "${COPIER_ARGS[@]}" "$DESTINATION"
 
-    # Copier will have created a new commit; the cleanup trap will restore _src_path
-    # The user should amend/squash commits as needed
+    # Update _commit to current template HEAD (only after successful update)
+    TEMPLATE_COMMIT=$(git -C "$SCRIPT_DIR" rev-parse HEAD)
+    sed -i.bak "s|^_commit:.*|_commit: $TEMPLATE_COMMIT|" "$ANSWERS_FILE"
+    rm -f "$ANSWERS_FILE.bak"
 else
     COPIER_RUNNING=1 copier update "${COPIER_ARGS[@]}" "$DESTINATION"
 fi

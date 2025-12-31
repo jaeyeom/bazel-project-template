@@ -52,7 +52,7 @@ jobs:
 
       - name: Create project from template
         run: |
-          ./create-project.sh -y \
+          ./create-project.sh -y --local \
             -n test-project \
             -o testorg \
             -l "${{ matrix.languages }}" \
@@ -88,7 +88,7 @@ jobs:
 
       - name: Create then update project
         run: |
-          ./create-project.sh -y -n test-project "$RUNNER_TEMP/test-project"
+          ./create-project.sh -y --local -n test-project "$RUNNER_TEMP/test-project"
           cd "$RUNNER_TEMP/test-project"
           git init -b main
           git config user.name "CI"
@@ -96,4 +96,4 @@ jobs:
           git add .
           git commit -m "Initial commit"
           cd -
-          ./update-project.sh -y --head "$RUNNER_TEMP/test-project"
+          ./update-project.sh -y --local "$RUNNER_TEMP/test-project"

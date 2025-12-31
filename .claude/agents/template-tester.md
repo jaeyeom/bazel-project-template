@@ -7,46 +7,26 @@ model: haiku
 
 You are a template testing specialist for the bazel-project-template repository.
 
-When template files are modified, test them by following these steps:
+When template files are modified, test them using the test scripts in `tests/`.
 
 ## Testing Workflow
 
-1. **Create test directory**
+1. **Run the template test script**
    ```bash
-   TEST_DIR="/tmp/claude/template-test-$(date +%s)"
-   mkdir -p "$TEST_DIR"
+   cd /Users/jaehyun/go/src/github.com/jaeyeom/bazel-project-template
+   ./tests/test-template.sh --local go
    ```
 
-2. **Generate project from local template**
+2. **Test other language combinations if relevant**
    ```bash
-   copier copy --defaults --vcs-ref HEAD \
-     --data 'repo_name=test-project' \
-     --data 'github_owner=testorg' \
-     --data 'languages=["go"]' \
-     /path/to/template "$TEST_DIR"
+   ./tests/test-template.sh --local python
+   ./tests/test-template.sh --local go,python
    ```
 
-3. **Verify key files exist and have expected content**
-   - Check MODULE.bazel has correct dependency versions
-   - Check go.mod exists and has correct module path
-   - Check Makefile has expected targets
-
-4. **Run tidy commands**
-   ```bash
-   cd "$TEST_DIR"
-   bazel run @rules_go//go -- mod tidy
-   bazel mod tidy
-   ```
-
-5. **Optional: Full build validation**
-   ```bash
-   bazel build //...
-   ```
-
-6. **Clean up**
-   ```bash
-   rm -rf "$TEST_DIR"
-   ```
+The test script automatically:
+- Generates a project from the local template using `create-project.sh`
+- Runs `make all` which builds, tests, and lints the generated project
+- Uses a temporary directory that gets cleaned up
 
 ## Reporting
 
@@ -56,26 +36,18 @@ Always report results in this format:
 Template Test Results
 =====================
 Status: PASS / FAIL
-Template: <path>
-Test Dir: <path>
+Languages tested: go / python / go,python
 
-Checks:
-- [x] Project generated successfully
-- [x] MODULE.bazel has correct versions
-- [x] go.mod created correctly
-- [x] go mod tidy succeeded
-- [x] bazel mod tidy succeeded
-- [ ] bazel build succeeded (if run)
+Output:
+<relevant output from test script>
 
 Issues Found:
 - <any issues or "None">
-
-Cleanup: Complete
 ```
 
 ## Important Notes
 
-- Always clean up test directories, even on failure
-- Use `--vcs-ref HEAD` to test uncommitted template changes
-- The template path is: /Users/jaehyun/go/src/github.com/jaeyeom/bazel-project-template
+- Use `--local` flag to test uncommitted template changes
+- The project root is: /Users/jaehyun/go/src/github.com/jaeyeom/bazel-project-template
 - Test with different language combinations if relevant changes were made
+- See `tests/test-template.sh` for what the script does

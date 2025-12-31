@@ -95,11 +95,13 @@ if [[ "$USE_LOCAL" = true ]]; then
     sed -i.bak "s|^_src_path:.*|_src_path: $SCRIPT_DIR|" "$ANSWERS_FILE"
     rm -f "$ANSWERS_FILE.bak"
 
-    # Commit the temporary change (will be amended/reverted after copier runs)
+    # Commit the temporary change if there are changes (will be amended/reverted after copier runs)
     ORIGINAL_DIR="$(pwd)"
     cd "$DESTINATION"
     git add .copier-answers.yml
-    git commit -m "chore: temporarily use local template source for update"
+    if ! git diff --cached --quiet; then
+        git commit -m "chore: temporarily use local template source for update"
+    fi
     cd "$ORIGINAL_DIR"
 
     # Set up cleanup trap to restore original _src_path (always runs)

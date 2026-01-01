@@ -1,0 +1,37 @@
+{#- Generated for ci_platform: {{ ci_platform }} -#}
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+{%- if 'go' in languages %}
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '{{ go_version }}'
+      - name: Install golangci-lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
+          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+{%- endif %}
+{%- if 'python' in languages %}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '{{ python_version }}'
+      - name: Install Python tools
+        run: pip install ruff
+{%- endif %}
+      - uses: bazel-contrib/setup-bazel@0.14.0
+        with:
+          bazelisk-cache: true
+          disk-cache: {% raw %}${{ github.workflow }}{% endraw %}
+          repository-cache: true
+      - name: Run checks
+        run: make check

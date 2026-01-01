@@ -74,9 +74,18 @@ include_copier_badge:
   help: "Include Copier badge in README.md to show support for Copier"
   default: false
 
-# Exclude files based on language selection
+ci_platform:
+  type: str
+  help: "CI platform to generate workflow files for"
+  choices:
+    - none
+    - github
+  default: none
+
+# Exclude files based on language selection and CI platform
 _exclude:
   - "{% if 'go' not in languages %}go.mod{% endif %}"
   - "{% if 'go' not in languages %}.golangci.yml{% endif %}"
   - "{% if 'python' not in languages %}pyproject.toml{% endif %}"
   - "{% if 'python' not in languages %}requirements.in{% endif %}"
+  - "{% if ci_platform != 'github' %}.github{% endif %}"

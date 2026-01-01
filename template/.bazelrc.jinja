@@ -34,3 +34,7 @@ test --nobuild_tests_only
 # Performance settings
 build --jobs=auto
 test --jobs=auto
+
+# Import user-specific settings (not committed to version control)
+# Copy .bazelrc.user.example to .bazelrc.user and customize as needed
+try-import %workspace%/.bazelrc.user

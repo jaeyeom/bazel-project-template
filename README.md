@@ -135,3 +135,12 @@ To manage dependencies:
 go mod tidy      # Clean up Go module dependencies
 bazel mod tidy   # Clean up Bazel module dependencies
 ```
+
+## Version Bumps
+
+Generated projects include a `VERSION-BUMPS.md` guide explaining how to upgrade Bazel, Go, Python, and other dependency versions. Two approaches are supported:
+
+1. **Direct edit**: Modify version files directly (`.bazeliskrc`, `MODULE.bazel`, `go.mod`)
+2. **Copier answers**: Edit `.copier-answers.yml` to persist changes through template updates
+
+See the generated `VERSION-BUMPS.md` in your project for detailed instructions.

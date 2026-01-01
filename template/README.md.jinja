@@ -1,4 +1,8 @@
 # {{ repo_name }}
+{% if include_copier_badge | default(false) %}
+
+[![Copier](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/copier-org/copier/master/img/badge/badge-grayscale-inverted-border-orange.json)](https://github.com/copier-org/copier)
+{% endif %}
 
 {{ project_description }}
 

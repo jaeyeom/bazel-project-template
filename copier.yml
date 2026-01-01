@@ -68,6 +68,12 @@ author_email:
   help: "Author email for project metadata"
   default: ""
 
+# Optional features
+include_copier_badge:
+  type: bool
+  help: "Include Copier badge in README.md to show support for Copier"
+  default: false
+
 # Exclude files based on language selection
 _exclude:
   - "{% if 'go' not in languages %}go.mod{% endif %}"

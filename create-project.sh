@@ -218,7 +218,7 @@ if [[ "$USE_LOCAL" = true ]]; then
 else
     TEMPLATE_SRC="gh:jaeyeom/bazel-project-template"
 fi
-copier copy "${COPIER_ARGS[@]}" "$TEMPLATE_SRC" "$DESTINATION"
+COPIER_RUNNING=1 copier copy "${COPIER_ARGS[@]}" "$TEMPLATE_SRC" "$DESTINATION"
 
 echo ""
 echo "Project created at: $DESTINATION"

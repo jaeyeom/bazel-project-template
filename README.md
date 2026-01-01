@@ -82,6 +82,7 @@ starting with foundational packages. See [MIGRATION.md](MIGRATION.md) for detail
 | `bazel_version`       | Bazel version                               | "8.5.0"                           |
 | `author_name`         | Author name                                 | ""                                |
 | `author_email`        | Author email                                | ""                                |
+| `include_copier_badge`| Include Copier badge in README              | false                             |
 
 ## Generated Structure
 

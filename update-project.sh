@@ -2,7 +2,7 @@
 # Update an existing project from the template
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
 usage() {
     cat << EOF
@@ -81,6 +81,9 @@ if [[ ! -f "$DESTINATION/.copier-answers.yml" ]]; then
     echo "(missing .copier-answers.yml)" >&2
     exit 1
 fi
+
+# Resolve destination path to avoid symlink mismatches (e.g., /var vs /private/var on macOS)
+DESTINATION="$(cd "$DESTINATION" && pwd -P)"
 
 echo "Updating project at: $DESTINATION"
 echo ""

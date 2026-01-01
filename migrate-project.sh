@@ -2,7 +2,7 @@
 # Migrate an existing project to use Bazel
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
 usage() {
     cat << EOF
@@ -212,7 +212,7 @@ if [[ ! -d "$DESTINATION" ]]; then
 fi
 
 # Convert to absolute path
-DESTINATION="$(cd "$DESTINATION" && pwd)"
+DESTINATION="$(cd "$DESTINATION" && pwd -P)"
 
 echo "Analyzing existing project..."
 

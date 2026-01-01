@@ -7,7 +7,7 @@ This guide explains how to migrate an existing project to use Bazel as the build
 If you're reading this, you likely ran:
 
 ```bash
-create-project.sh --migrate [--ignore-all] /path/to/your/project
+migrate-project.sh [--ignore-all] /path/to/your/project
 ```
 
 ## Migration Strategies
@@ -18,7 +18,7 @@ For smaller projects or those with few dependencies:
 
 ```bash
 # 1. Run the migration
-create-project.sh --migrate /path/to/project
+migrate-project.sh /path/to/project
 
 # 2. Generate BUILD files
 cd /path/to/project
@@ -37,7 +37,7 @@ For larger projects, use `.bazelignore` to migrate incrementally:
 
 ```bash
 # 1. Run migration with --ignore-all
-create-project.sh --migrate --ignore-all /path/to/project
+migrate-project.sh --ignore-all /path/to/project
 
 # 2. Edit .bazelignore to start with foundational packages
 # (see "Migration Order" below)
@@ -54,16 +54,15 @@ bazel build //...
 **Critical**: Migrate packages in dependency order, starting from the foundation.
 
 ```
-Foundational packages    ← Migrate FIRST (no internal dependencies)
-        ↑
-   Core packages         ← Migrate SECOND (depend on foundational)
-        ↑
-Application packages     ← Migrate LAST (depend on core)
+Foundational packages    <- Migrate FIRST (no internal dependencies)
+        ^
+   Core packages         <- Migrate SECOND (depend on foundational)
+        ^
+Application packages     <- Migrate LAST (depend on core)
 ```
 
 ### Finding Your Dependency Order
 
-{% if 'go' in languages -%}
 For Go projects:
 
 ```bash
@@ -71,14 +70,12 @@ For Go projects:
 go list ./...
 
 # See what a package imports
-go list -f '{{ "{{" }}.Imports{{ "}}" }}' ./pkg/mypackage
+go list -f '{{.Imports}}' ./pkg/mypackage
 
 # Find packages with no internal dependencies (good starting points)
-go list -f '{{ "{{" }}if not .Imports{{ "}}" }}{{ "{{" }}.ImportPath{{ "}}" }}{{ "{{" }}end{{ "}}" }}' ./...
+go list -f '{{if not .Imports}}{{.ImportPath}}{{end}}' ./...
 ```
 
-{% endif -%}
-{% if 'python' in languages -%}
 For Python projects:
 
 ```bash
@@ -89,7 +86,6 @@ pipdeptree --local-only
 grep -r "^from \. import\|^from \.\." src/
 ```
 
-{% endif -%}
 ## Common Issues and Solutions
 
 ### Issue: Gazelle generates incorrect BUILD files
@@ -97,7 +93,7 @@ grep -r "^from \. import\|^from \.\." src/
 **Solution**: Use Gazelle directives in your root BUILD.bazel:
 
 ```starlark
-# gazelle:prefix {{ go_module_path }}
+# gazelle:prefix <your-module-path>
 # gazelle:exclude vendor
 # gazelle:exclude testdata
 ```
@@ -105,20 +101,18 @@ grep -r "^from \. import\|^from \.\." src/
 ### Issue: Missing dependencies
 
 **Solution**: Ensure all external dependencies are declared:
-{% if 'go' in languages %}
+
 For Go, run:
 ```bash
 go mod tidy
 bazel run //:gazelle -- update-repos -from_file=go.mod
 ```
-{% endif %}
-{% if 'python' in languages %}
+
 For Python, ensure requirements.in is complete:
 ```bash
 pip-compile requirements.in
 bazel run //:gazelle
 ```
-{% endif %}
 
 ### Issue: Build files conflict with existing structure
 
@@ -140,7 +134,6 @@ Common causes:
 3. **Environment differences**: Different env vars in Bazel sandbox
    - Fix: Set `env` attribute or use `--test_env`
 
-{% if 'go' in languages -%}
 ### Go-Specific Issues
 
 **Issue**: `go:embed` directives not working
@@ -160,8 +153,6 @@ go_library(
 # gazelle:build_tags integration
 ```
 
-{% endif -%}
-{% if 'python' in languages -%}
 ### Python-Specific Issues
 
 **Issue**: Imports not resolving
@@ -176,7 +167,6 @@ py_library(
 )
 ```
 
-{% endif -%}
 ## Verifying Migration
 
 After migrating each package:
@@ -189,13 +179,10 @@ bazel build //path/to/package/...
 bazel test //path/to/package/...
 
 # 3. Check that the old build still works (during transition)
-{% if 'go' in languages -%}
 go build ./path/to/package/...
 go test ./path/to/package/...
-{% endif -%}
-{% if 'python' in languages -%}
+# or for Python:
 python -m pytest path/to/package/
-{% endif -%}
 ```
 
 ## Gradual Migration Checklist
@@ -238,9 +225,5 @@ Once fully migrated:
 
 - [Bazel Documentation](https://bazel.build/docs)
 - [Gazelle Documentation](https://github.com/bazelbuild/bazel-gazelle)
-{% if 'go' in languages -%}
 - [rules_go Documentation](https://github.com/bazelbuild/rules_go)
-{% endif -%}
-{% if 'python' in languages -%}
 - [rules_python Documentation](https://github.com/bazelbuild/rules_python)
-{% endif -%}

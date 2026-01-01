@@ -68,21 +68,9 @@ author_email:
   help: "Author email for project metadata"
   default: ""
 
-# Migration settings
-migration_mode:
-  type: bool
-  help: "Is this a migration of an existing project?"
-  default: false
-
-ignore_all:
-  type: bool
-  help: "Generate .bazelignore with all directories for gradual migration?"
-  default: false
-
-# Exclude files based on language selection and migration mode
+# Exclude files based on language selection
 _exclude:
   - "{% if 'go' not in languages %}go.mod{% endif %}"
   - "{% if 'go' not in languages %}.golangci.yml{% endif %}"
   - "{% if 'python' not in languages %}pyproject.toml{% endif %}"
   - "{% if 'python' not in languages %}requirements.in{% endif %}"
-  - "{% if not migration_mode %}MIGRATION.md{% endif %}"

@@ -68,7 +68,7 @@ case $LANG_TYPE in
 esac
 
 # Build migration command arguments
-MIGRATE_ARGS=(--migrate -y)
+MIGRATE_ARGS=(-y)
 if [[ "$MODE" == "local" ]]; then
     MIGRATE_ARGS+=(--local --head)
 fi
@@ -78,7 +78,7 @@ fi
 MIGRATE_ARGS+=("$PROJECT_DIR")
 
 # Run migration
-"$PROJECT_ROOT/create-project.sh" "${MIGRATE_ARGS[@]}"
+"$PROJECT_ROOT/migrate-project.sh" "${MIGRATE_ARGS[@]}"
 
 # Verify migration files
 echo "=== Verifying migration files ==="
@@ -86,7 +86,7 @@ test -f MODULE.bazel || { echo "MODULE.bazel missing"; exit 1; }
 test -f BUILD.bazel || { echo "BUILD.bazel missing"; exit 1; }
 test -f .bazelrc || { echo ".bazelrc missing"; exit 1; }
 test -f .bazelignore || { echo ".bazelignore missing"; exit 1; }
-test -f MIGRATION.md || { echo "MIGRATION.md missing"; exit 1; }
+test -f BAZEL-MIGRATION.md || { echo "BAZEL-MIGRATION.md missing"; exit 1; }
 echo "All migration files present"
 
 # Verify gradual migration content if applicable

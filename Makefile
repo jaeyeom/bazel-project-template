@@ -10,7 +10,7 @@ all: shellcheck test-template-go test-update test-migrate-go
 # Run shellcheck on all shell scripts
 shellcheck:
 	@echo "=== Running shellcheck ==="
-	shellcheck create-project.sh update-project.sh tests/*.sh
+	shellcheck create-project.sh update-project.sh migrate-project.sh tests/*.sh
 
 # Template tests (use LANGUAGES and MODE variables)
 # Examples:

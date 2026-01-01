@@ -50,6 +50,24 @@ When the template is updated, you can pull in changes to your existing project:
 ./update-project.sh --help
 ```
 
+### Migrating an existing project to Bazel
+
+To add Bazel to an existing project:
+
+```bash
+# Migrate with auto-detection of languages and settings
+./migrate-project.sh ~/existing-project
+
+# Gradual migration (adds all directories to .bazelignore)
+./migrate-project.sh --ignore-all ~/existing-project
+
+# See all options
+./migrate-project.sh --help
+```
+
+For gradual migration, edit `.bazelignore` to remove directories one at a time,
+starting with foundational packages. See `BAZEL-MIGRATION.md` for detailed guidance.
+
 ## Template Questions
 
 | Question              | Description                                 | Default                           |

@@ -66,7 +66,7 @@ To add Bazel to an existing project:
 ```
 
 For gradual migration, edit `.bazelignore` to remove directories one at a time,
-starting with foundational packages. See `BAZEL-MIGRATION.md` for detailed guidance.
+starting with foundational packages. See [MIGRATION.md](MIGRATION.md) for detailed guidance.
 
 ## Template Questions
 

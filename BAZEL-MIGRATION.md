@@ -1,53 +1,8 @@
-# Migrating to Bazel
+# Bazel Migration Guide
 
-This guide explains how to migrate an existing project to use Bazel as the build system.
+This guide helps you complete your Bazel migration after running the migration script.
 
-## Quick Start
-
-If you're reading this, you likely ran:
-
-```bash
-migrate-project.sh [--ignore-all] /path/to/your/project
-```
-
-## Migration Strategies
-
-### Strategy 1: All-at-Once (Small Projects)
-
-For smaller projects or those with few dependencies:
-
-```bash
-# 1. Run the migration
-migrate-project.sh /path/to/project
-
-# 2. Generate BUILD files
-cd /path/to/project
-bazel run //:gazelle
-
-# 3. Build everything
-bazel build //...
-
-# 4. Run tests
-bazel test //...
-```
-
-### Strategy 2: Gradual Migration (Large Projects)
-
-For larger projects, use `.bazelignore` to migrate incrementally:
-
-```bash
-# 1. Run migration with --ignore-all
-migrate-project.sh --ignore-all /path/to/project
-
-# 2. Edit .bazelignore to start with foundational packages
-# (see "Migration Order" below)
-
-# 3. Generate BUILD files for non-ignored packages
-bazel run //:gazelle
-
-# 4. Build and verify
-bazel build //...
-```
+For small projects, running `bazel run //:gazelle` will generate BUILD.bazel files for your entire codebase, and you're done. However, for larger projects with complex dependencies, Gazelle may generate incorrect BUILD files or encounter issues. In such cases, a gradual migration approach works better—migrate packages one at a time by progressively removing entries from `.bazelignore`, starting from foundational packages with no internal dependencies.
 
 ## Migration Order
 
